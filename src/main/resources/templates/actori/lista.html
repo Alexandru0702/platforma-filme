@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ro">
-<head th:replace="~{fragments :: head('Clienti')}"></head>
+<head th:replace="~{fragments :: head('Actori')}"></head>
 <body>
 <nav th:replace="~{fragments :: navbar}"></nav>
 
@@ -11,11 +11,9 @@
     </div>
 
     <div class="page-header d-flex justify-content-between align-items-center">
-        <h2><i class="bi bi-people text-danger"></i> Clienti
-            <span class="badge bg-secondary ms-2" th:text="${#lists.size(clienti)}"></span>
-        </h2>
-        <a href="/clienti/nou" class="btn btn-danger">
-            <i class="bi bi-plus-lg"></i> Client nou
+        <h2><i class="bi bi-person-badge text-danger"></i> Actori</h2>
+        <a href="/actori/nou" class="btn btn-danger">
+            <i class="bi bi-plus-lg"></i> Actor nou
         </a>
     </div>
 
@@ -24,34 +22,33 @@
             <table class="table table-dark table-hover mb-0">
                 <thead>
                 <tr>
-                    <th>#</th><th>Nume</th><th>Oras</th><th>Email</th>
-                    <th>Telefon</th><th>Inregistrat</th><th>Actiuni</th>
+                    <th>#</th><th>Nume</th><th>Nationalitate</th>
+                    <th>Data nastere</th><th>Nr. filme</th><th>Actiuni</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="c : ${clienti}">
-                    <td th:text="${c.idClient}"></td>
-                    <td class="fw-bold" th:text="${c.numeComplet}"></td>
-                    <td th:text="${c.oras ?: '-'}"></td>
-                    <td th:text="${c.email ?: '-'}"></td>
-                    <td th:text="${c.telefonAcasa}"></td>
-                    <td th:text="${c.dataInregistrare ?: '-'}"></td>
+                <tr th:each="a : ${actori}">
+                    <td th:text="${a.idActor}"></td>
+                    <td class="fw-bold" th:text="${a.numeDisplay}"></td>
+                    <td th:text="${a.nationalitate ?: '-'}"></td>
+                    <td th:text="${a.dataNastere ?: '-'}"></td>
+                    <td><span class="badge bg-danger" th:text="${a.nrFilme}"></span></td>
                     <td>
-                        <a th:href="@{/clienti/{id}/editeaza(id=${c.idClient})}"
+                        <a th:href="@{/actori/{id}/editeaza(id=${a.idActor})}"
                            class="btn btn-sm btn-outline-secondary me-1">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <form th:action="@{/clienti/{id}/sterge(id=${c.idClient})}"
+                        <form th:action="@{/actori/{id}/sterge(id=${a.idActor})}"
                               method="post" class="d-inline"
-                              onsubmit="return confirm('Stergi clientul?')">
+                              onsubmit="return confirm('Stergi actorul?')">
                             <button type="submit" class="btn btn-sm btn-outline-danger">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
                     </td>
                 </tr>
-                <tr th:if="${#lists.isEmpty(clienti)}">
-                    <td colspan="7" class="text-center text-muted py-4">Niciun client inregistrat.</td>
+                <tr th:if="${#lists.isEmpty(actori)}">
+                    <td colspan="6" class="text-center text-muted py-4">Niciun actor inregistrat.</td>
                 </tr>
                 </tbody>
             </table>

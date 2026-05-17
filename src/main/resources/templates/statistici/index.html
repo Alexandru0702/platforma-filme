@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head th:replace="~{fragments :: head('Statistici')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container mt-4">
+
+    <div class="page-header">
+        <h2><i class="bi bi-bar-chart-fill text-danger"></i> Statistici &amp; Algoritmi</h2>
+        <p class="text-muted">Analiza sentiment · Recomandari personalizate · Predictii sezoniere</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTIUNEA 1: Statistici globale ale platformei               -->
+    <!-- ============================================================ -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-2 col-6">
+            <div class="card p-3 text-center">
+                <div class="display-6 fw-bold text-danger" th:text="${stats['nr_filme']}">0</div>
+                <small class="text-muted"><i class="bi bi-film"></i> Filme</small>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card p-3 text-center">
+                <div class="display-6 fw-bold text-danger" th:text="${stats['nr_clienti']}">0</div>
+                <small class="text-muted"><i class="bi bi-people"></i> Clienti</small>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card p-3 text-center">
+                <div class="display-6 fw-bold text-danger" th:text="${stats['nr_vizualizari']}">0</div>
+                <small class="text-muted"><i class="bi bi-play-circle"></i> Vizualizari</small>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card p-3 text-center">
+                <div class="display-6 fw-bold text-danger" th:text="${stats['nr_actori']}">0</div>
+                <small class="text-muted"><i class="bi bi-person-badge"></i> Actori</small>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card p-3 text-center">
+                <div class="display-6 fw-bold text-danger" th:text="${stats['nr_voturi']}">0</div>
+                <small class="text-muted"><i class="bi bi-star"></i> Voturi</small>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card p-3 text-center">
+                <div class="display-6 fw-bold text-danger" th:text="${stats['rating_mediu_filme']}">0</div>
+                <small class="text-muted"><i class="bi bi-trophy"></i> Rating mediu</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- ============================================================ -->
+        <!-- SECTIUNEA 2: Analiza sentiment (toate filmele)               -->
+        <!-- ============================================================ -->
+        <div class="col-12">
+            <div class="card p-4">
+                <h4 class="mb-1">
+                    <i class="bi bi-emoji-smile text-danger"></i> Analiza Sentiment
+                </h4>
+                <p class="text-muted small mb-3">
+                    Scor calculat din 3 surse: caracterizari bifate (ponderate x2) +
+                    voturi (nota &ge;8=pozitiv, 5-7=neutru, &le;4=negativ) +
+                    comentarii (scanate cu dictionar de cuvinte-cheie din BD)
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover table-sm mb-0">
+                        <thead>
+                        <tr>
+                            <th>Film</th>
+                            <th>Rating BD</th>
+                            <th>Sentiment</th>
+                            <th>Scor</th>
+                            <th>Caract. (+/-)</th>
+                            <th>Voturi (+/-)</th>
+                            <th>Comentarii (+/-)</th>
+                            <th>Total semnale</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="row : ${sentiment}">
+                            <td class="fw-bold">
+                                <a th:href="@{/filme/{id}(id=${row['id_film']})}"
+                                   th:text="${row['titlu']}"></a>
+                            </td>
+                            <td>
+                                <span class="badge-rating" th:text="${row['rating']}"></span>
+                            </td>
+                            <td>
+                                <span th:if="${row['eticheta_sentiment'] == 'POZITIV'}"
+                                      class="badge bg-success">POZITIV</span>
+                                <span th:if="${row['eticheta_sentiment'] == 'NEGATIV'}"
+                                      class="badge bg-danger">NEGATIV</span>
+                                <span th:if="${row['eticheta_sentiment'] == 'NEUTRU'}"
+                                      class="badge bg-secondary">NEUTRU</span>
+                            </td>
+                            <td class="fw-bold" th:text="${row['scor_sentiment']}">0</td>
+                            <td class="text-center">
+                                <span class="text-success" th:text="${row['kar_pozitiv']}"></span>
+                                <span class="text-muted">/</span>
+                                <span class="text-danger" th:text="${row['kar_negativ']}"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="text-success" th:text="${row['vot_pozitiv']}"></span>
+                                <span class="text-muted">/</span>
+                                <span class="text-danger" th:text="${row['vot_negativ']}"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="text-success" th:text="${row['com_pozitiv']}"></span>
+                                <span class="text-muted">/</span>
+                                <span class="text-danger" th:text="${row['com_negativ']}"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary" th:text="${row['total_feedback']}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(sentiment)}">
+                            <td colspan="8" class="text-center text-muted py-3">
+                                Nu exista date pentru analiza sentiment.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTIUNEA 3: Recomandari personalizate per client            -->
+        <!-- ============================================================ -->
+        <div class="col-md-6">
+            <div class="card p-4 h-100">
+                <h4 class="mb-1">
+                    <i class="bi bi-magic text-danger"></i> Recomandari Personalizate
+                </h4>
+                <p class="text-muted small mb-3">
+                    Top 3 categorii preferate ale clientului &rarr;
+                    filme nevizionate din acele categorii &rarr; sortat dupa rating.
+                </p>
+
+                <form method="get" action="/statistici">
+                    <div class="d-flex gap-2 mb-3">
+                        <select name="idClient" class="form-select form-select-sm">
+                            <option value="">-- Selecteaza un client --</option>
+                            <option th:each="c : ${clienti}"
+                                    th:value="${c.idClient}"
+                                    th:text="${c.numeComplet}"
+                                    th:selected="${idClientSelectat != null and idClientSelectat == c.idClient}">
+                            </option>
+                        </select>
+                        <button type="submit" class="btn btn-danger btn-sm px-3">
+                            <i class="bi bi-search"></i> Cauta
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Rezultate -->
+                <div th:if="${recomandari != null}">
+                    <p class="text-muted small mb-2">
+                        Recomandari pentru
+                        <strong th:text="${numeClientSelectat}"></strong>:
+                    </p>
+                    <div th:if="${#lists.isEmpty(recomandari)}"
+                         class="text-center text-muted py-3">
+                        <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        <p class="mt-2">Clientul a vizionat deja toate filmele din categoriile sale preferate!</p>
+                    </div>
+                    <div th:each="r : ${recomandari}"
+                         class="d-flex align-items-center mb-2 p-2"
+                         style="background:#0d1117; border-radius:6px; border:1px solid #30363d;">
+                        <div class="flex-grow-1">
+                            <a th:href="@{/filme/{id}(id=${r['id_film']})}"
+                               th:text="${r['titlu']}"
+                               class="fw-bold d-block text-decoration-none"></a>
+                            <small class="text-muted" th:text="${r['categorie']}"></small>
+                        </div>
+                        <span class="badge-rating ms-3" th:text="${r['rating']}"></span>
+                    </div>
+                </div>
+
+                <div th:if="${recomandari == null}"
+                     class="text-muted text-center py-4">
+                    <i class="bi bi-person-plus display-6 d-block mb-2"></i>
+                    Selecteaza un client pentru recomandari
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTIUNEA 4: Predictii sezoniere (luna calendaristica)       -->
+        <!-- ============================================================ -->
+        <div class="col-md-6">
+            <div class="card p-4 h-100">
+                <h4 class="mb-1">
+                    <i class="bi bi-calendar3 text-danger"></i> Predictii Sezoniere
+                </h4>
+                <p class="text-muted small mb-3">
+                    Distributia vizualizarilor istorice pe luni.
+                    Lunile cu procent ridicat indica perioade cu trafic crescut.
+                </p>
+
+                <div th:if="${#lists.isEmpty(predictii)}"
+                     class="text-muted text-center py-3">
+                    Nu exista date de vizualizare pentru predictii.
+                </div>
+
+                <div th:each="row : ${predictii}" class="mb-2">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small fw-bold" th:text="${row['luna_nume']}">Luna</span>
+                        <span class="small text-muted">
+                            <span th:text="${row['nr_vizualizari']}">0</span> viz.
+                            (<span th:text="${row['procent']}">0</span>%)
+                        </span>
+                    </div>
+                    <div class="progress mb-1" style="height:12px; background:#21262d;">
+                        <div class="progress-bar bg-danger"
+                             th:style="|width: ${row['procent']}%|"
+                             role="progressbar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTIUNEA 5: Categorii preferate per anotimp                 -->
+        <!-- ============================================================ -->
+        <div class="col-12">
+            <div class="card p-4">
+                <h4 class="mb-3">
+                    <i class="bi bi-cloud-sun text-danger"></i> Categorii preferate per Anotimp
+                </h4>
+
+                <div th:if="${#lists.isEmpty(categoriiSezon)}"
+                     class="text-muted text-center py-3">
+                    Nu exista date suficiente pentru analiza pe anotimpuri.
+                </div>
+
+                <div th:if="${not #lists.isEmpty(categoriiSezon)}" class="row g-3">
+                    <div class="col-md-3">
+                        <div class="card p-3" style="border-color:#4a90d9;">
+                            <h6 style="color:#4a90d9;">
+                                <i class="bi bi-snow2"></i> Iarna
+                            </h6>
+                            <div th:each="row : ${categoriiSezon}"
+                                 th:if="${row['sezon'] == 'Iarna'}">
+                                <div class="d-flex justify-content-between small py-1"
+                                     style="border-bottom:1px solid #30363d;">
+                                    <span th:text="${row['categorie']}"></span>
+                                    <span class="badge bg-secondary"
+                                          th:text="${row['nr_vizualizari']}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3" style="border-color:#4caf50;">
+                            <h6 style="color:#4caf50;">
+                                <i class="bi bi-flower1"></i> Primavara
+                            </h6>
+                            <div th:each="row : ${categoriiSezon}"
+                                 th:if="${row['sezon'] == 'Primavara'}">
+                                <div class="d-flex justify-content-between small py-1"
+                                     style="border-bottom:1px solid #30363d;">
+                                    <span th:text="${row['categorie']}"></span>
+                                    <span class="badge bg-secondary"
+                                          th:text="${row['nr_vizualizari']}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3" style="border-color:#ff9800;">
+                            <h6 style="color:#ff9800;">
+                                <i class="bi bi-sun"></i> Vara
+                            </h6>
+                            <div th:each="row : ${categoriiSezon}"
+                                 th:if="${row['sezon'] == 'Vara'}">
+                                <div class="d-flex justify-content-between small py-1"
+                                     style="border-bottom:1px solid #30363d;">
+                                    <span th:text="${row['categorie']}"></span>
+                                    <span class="badge bg-secondary"
+                                          th:text="${row['nr_vizualizari']}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3" style="border-color:#a0522d;">
+                            <h6 style="color:#a0522d;">
+                                <i class="bi bi-cloud-drizzle"></i> Toamna
+                            </h6>
+                            <div th:each="row : ${categoriiSezon}"
+                                 th:if="${row['sezon'] == 'Toamna'}">
+                                <div class="d-flex justify-content-between small py-1"
+                                     style="border-bottom:1px solid #30363d;">
+                                    <span th:text="${row['categorie']}"></span>
+                                    <span class="badge bg-secondary"
+                                          th:text="${row['nr_vizualizari']}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end .row -->
+</div><!-- end .container -->
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>
