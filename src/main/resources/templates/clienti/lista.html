@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head th:replace="~{fragments :: head('Actori')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container mt-4">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-person-badge text-danger"></i> Actori</h2>
+        <a href="/actori/nou" class="btn btn-danger">
+            <i class="bi bi-plus-lg"></i> Actor nou
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                <tr>
+                    <th>#</th><th>Nume</th><th>Nationalitate</th>
+                    <th>Data nastere</th><th>Nr. filme</th><th>Actiuni</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${actori}">
+                    <td th:text="${a.idActor}"></td>
+                    <td class="fw-bold" th:text="${a.numeDisplay}"></td>
+                    <td th:text="${a.nationalitate ?: '-'}"></td>
+                    <td th:text="${a.dataNastere ?: '-'}"></td>
+                    <td><span class="badge bg-danger" th:text="${a.nrFilme}"></span></td>
+                    <td>
+                        <a th:href="@{/actori/{id}/editeaza(id=${a.idActor})}"
+                           class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form th:action="@{/actori/{id}/sterge(id=${a.idActor})}"
+                              method="post" class="d-inline"
+                              onsubmit="return confirm('Stergi actorul?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(actori)}">
+                    <td colspan="6" class="text-center text-muted py-4">Niciun actor inregistrat.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

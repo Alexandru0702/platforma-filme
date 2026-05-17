@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head th:replace="~{fragments :: head(${film.titlu})}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container mt-4">
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <a href="/filme" class="text-muted text-decoration-none">
+                <i class="bi bi-arrow-left"></i> Filme
+            </a>
+            <h2 class="mt-1 mb-0" th:text="${film.titlu}"></h2>
+            <span class="badge bg-secondary" th:text="${film.categorie}"></span>
+        </div>
+        <div>
+            <a th:href="@{/filme/{id}/editeaza(id=${film.idFilm})}"
+               class="btn btn-outline-secondary me-2">
+                <i class="bi bi-pencil"></i> Editeaza
+            </a>
+            <form th:action="@{/filme/{id}/sterge(id=${film.idFilm})}"
+                  method="post" class="d-inline"
+                  onsubmit="return confirm('Esti sigur ca vrei sa stergi acest film?')">
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> Sterge
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Info film -->
+        <div class="col-md-4">
+            <div class="card p-4">
+                <div class="text-center mb-3">
+                    <span class="display-4 badge-rating" th:text="${#numbers.formatDecimal(film.rating,1,1)}"></span>
+                    <p class="text-muted small mt-1">Rating mediu</p>
+                </div>
+                <table class="table table-dark table-sm">
+                    <tr>
+                        <td class="text-muted">An lansare</td>
+                        <td th:text="${film.dataLansare != null ? film.dataLansare.year : '-'}"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Durata</td>
+                        <td th:text="${film.durata != null ? film.durata + ' min' : '-'}"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Categorie</td>
+                        <td th:text="${film.categorie}"></td>
+                    </tr>
+                </table>
+                <p th:text="${film.descriere}" class="text-muted small"></p>
+            </div>
+        </div>
+
+        <!-- Versiuni disponibile -->
+        <div class="col-md-8">
+            <div class="card p-4 mb-3">
+                <h5><i class="bi bi-collection-play text-danger"></i> Versiuni disponibile</h5>
+                <div class="table-responsive">
+                    <table class="table table-dark table-sm">
+                        <thead>
+                        <tr><th>Format</th><th>Rezolutie</th><th>Limba</th><th>Subtitrare</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="v : ${versiuni}">
+                            <td><span class="badge bg-primary" th:text="${v.format}"></span></td>
+                            <td th:text="${v.rezolutie}"></td>
+                            <td th:text="${v.limba}"></td>
+                            <td th:text="${v.subtitrare ?: '-'}"></td>
+                            <td>
+                                <span th:if="${v.activ}" class="badge bg-success">Activ</span>
+                                <span th:unless="${v.activ}" class="badge bg-secondary">Inactiv</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(versiuni)}">
+                            <td colspan="5" class="text-muted text-center">Nicio versiune disponibila.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head th:replace="~{fragments :: head(${modEdit} ? 'Editeaza Actor' : 'Actor Nou')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="page-header">
+                <a href="/actori" class="text-muted text-decoration-none">
+                    <i class="bi bi-arrow-left"></i> Actori
+                </a>
+                <h3 class="mt-1" th:text="${modEdit} ? 'Editeaza Actor' : 'Actor Nou'"></h3>
+            </div>
+            <div class="card p-4">
+                <form th:action="${modEdit} ? @{/actori/{id}/editeaza(id=${actor.idActor})} : @{/actori/nou}"
+                      method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Prenume *</label>
+                            <input type="text" name="prenume" class="form-control"
+                                   th:value="${actor.prenume}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nume familie *</label>
+                            <input type="text" name="numeFamilie" class="form-control"
+                                   th:value="${actor.numeFamilie}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nume de scena</label>
+                        <input type="text" name="numeScena" class="form-control"
+                               th:value="${actor.numeScena}">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Data nastere</label>
+                            <input type="date" name="dataNastere" class="form-control"
+                                   th:value="${actor.dataNastere}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nationalitate</label>
+                            <input type="text" name="nationalitate" class="form-control"
+                                   th:value="${actor.nationalitate}">
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-save"></i>
+                            <span th:text="${modEdit} ? 'Salveaza' : 'Adauga actor'"></span>
+                        </button>
+                        <a href="/actori" class="btn btn-outline-secondary">Anuleaza</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head th:replace="~{fragments :: head('Clienti')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container mt-4">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-people text-danger"></i> Clienti
+            <span class="badge bg-secondary ms-2" th:text="${#lists.size(clienti)}"></span>
+        </h2>
+        <a href="/clienti/nou" class="btn btn-danger">
+            <i class="bi bi-plus-lg"></i> Client nou
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                <tr>
+                    <th>#</th><th>Nume</th><th>Oras</th><th>Email</th>
+                    <th>Telefon</th><th>Inregistrat</th><th>Actiuni</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${clienti}">
+                    <td th:text="${c.idClient}"></td>
+                    <td class="fw-bold" th:text="${c.numeComplet}"></td>
+                    <td th:text="${c.oras ?: '-'}"></td>
+                    <td th:text="${c.email ?: '-'}"></td>
+                    <td th:text="${c.telefonAcasa}"></td>
+                    <td th:text="${c.dataInregistrare ?: '-'}"></td>
+                    <td>
+                        <a th:href="@{/clienti/{id}/editeaza(id=${c.idClient})}"
+                           class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form th:action="@{/clienti/{id}/sterge(id=${c.idClient})}"
+                              method="post" class="d-inline"
+                              onsubmit="return confirm('Stergi clientul?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(clienti)}">
+                    <td colspan="7" class="text-center text-muted py-4">Niciun client inregistrat.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

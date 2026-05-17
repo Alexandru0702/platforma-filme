@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+
+<!-- Fragment HEAD comun -->
+<head th:fragment="head(titlu)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titlu} + ' - Platforma Filme'">Platforma Filme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #0d1117; color: #e6edf3; }
+        .navbar { background-color: #161b22 !important; border-bottom: 1px solid #30363d; }
+        .card  { background-color: #161b22; border: 1px solid #30363d; color: #e6edf3; }
+        .table { color: #e6edf3; }
+        .table-dark { --bs-table-bg: #161b22; --bs-table-border-color: #30363d; }
+        .table-hover > tbody > tr:hover > td { background-color: #1f2937; }
+        .btn-danger  { background-color: #e50914; border-color: #e50914; }
+        .btn-danger:hover { background-color: #b20710; }
+        .btn-outline-danger { color: #e50914; border-color: #e50914; }
+        .btn-outline-danger:hover { background-color: #e50914; color: #fff; }
+        .badge-rating { background-color: #e50914; color: #fff; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .form-control, .form-select {
+            background-color: #21262d; border-color: #30363d; color: #e6edf3;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #21262d; border-color: #e50914; color: #e6edf3; box-shadow: none;
+        }
+        .page-header { padding: 20px 0 15px; border-bottom: 1px solid #30363d; margin-bottom: 25px; }
+        a { color: #58a6ff; }
+        a:hover { color: #79c0ff; }
+        .text-muted { color: #8b949e !important; }
+    </style>
+</head>
+
+<!-- Fragment NAVBAR comun -->
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-camera-reels-fill text-danger"></i> Platforma Filme
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/filme"><i class="bi bi-film"></i> Filme</a>
+                <a class="nav-link" href="/actori"><i class="bi bi-person-badge"></i> Actori</a>
+                <a class="nav-link" href="/clienti"><i class="bi bi-people"></i> Clienti</a>
+                <a class="nav-link" href="/statistici"><i class="bi bi-bar-chart"></i> Statistici</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Fragment FOOTER comun -->
+<footer th:fragment="footer" class="text-center text-muted mt-5 py-3"
+        style="border-top: 1px solid #30363d;">
+    <small>Platforma Filme &copy; 2025 - Proiect SGBD Oracle XE 11g + Spring Boot</small>
+</footer>
+
+<!-- Fragment SCRIPTS comun -->
+<div th:fragment="scripts">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head th:replace="~{fragments :: head('Filme')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container mt-4">
+
+    <!-- Alert success -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-film text-danger"></i> Filme</h2>
+        <a href="/filme/nou" class="btn btn-danger">
+            <i class="bi bi-plus-lg"></i> Film nou
+        </a>
+    </div>
+
+    <!-- Top 5 -->
+    <div class="mb-4">
+        <h5 class="text-muted mb-3">Top 5 dupa rating</h5>
+        <div class="row g-3">
+            <div th:each="f : ${topFilme}" class="col-md">
+                <a th:href="@{/filme/{id}(id=${f.idFilm})}" class="text-decoration-none">
+                    <div class="card p-3 text-center h-100">
+                        <span class="badge-rating mb-2" th:text="${#numbers.formatDecimal(f.rating,1,1)}">0.0</span>
+                        <small th:text="${f.titlu}" class="fw-bold"></small>
+                        <small class="text-muted" th:text="${f.categorie}"></small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtru categorie -->
+    <div class="mb-3 d-flex gap-2 flex-wrap">
+        <a href="/filme" class="btn btn-sm btn-outline-danger">Toate</a>
+        <a th:each="cat : ${categorii}"
+           th:href="@{/filme(categorie=${cat.idCategorie})}"
+           th:text="${cat.nume}"
+           th:classappend="${categorieSelectata == cat.idCategorie} ? 'btn-danger' : 'btn-outline-danger'"
+           class="btn btn-sm"></a>
+    </div>
+
+    <!-- Tabel filme -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Titlu</th>
+                    <th>Categorie</th>
+                    <th>An</th>
+                    <th>Durata</th>
+                    <th>Rating</th>
+                    <th>Actiuni</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="f : ${filme}">
+                    <td th:text="${f.idFilm}"></td>
+                    <td>
+                        <a th:href="@{/filme/{id}(id=${f.idFilm})}"
+                           th:text="${f.titlu}" class="fw-bold"></a>
+                    </td>
+                    <td><span class="badge bg-secondary" th:text="${f.categorie}"></span></td>
+                    <td th:text="${f.dataLansare != null ? f.dataLansare.year : '-'}"></td>
+                    <td th:text="${f.durata != null ? f.durata + ' min' : '-'}"></td>
+                    <td><span class="badge-rating" th:text="${#numbers.formatDecimal(f.rating,1,1)}"></span></td>
+                    <td>
+                        <a th:href="@{/filme/{id}/editeaza(id=${f.idFilm})}"
+                           class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form th:action="@{/filme/{id}/sterge(id=${f.idFilm})}"
+                              method="post" class="d-inline"
+                              onsubmit="return confirm('Stergi filmul?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(filme)}">
+                    <td colspan="7" class="text-center text-muted py-4">Niciun film gasit.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

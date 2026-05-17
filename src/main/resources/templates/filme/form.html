@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head th:replace="~{fragments :: head(${modEdit} ? 'Editeaza Film' : 'Film Nou')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="page-header">
+                <a href="/filme" class="text-muted text-decoration-none">
+                    <i class="bi bi-arrow-left"></i> Filme
+                </a>
+                <h3 class="mt-1" th:text="${modEdit} ? 'Editeaza Film' : 'Film Nou'"></h3>
+            </div>
+
+            <div class="card p-4">
+                <form th:action="${modEdit} ? @{/filme/{id}/editeaza(id=${film.idFilm})} : @{/filme/nou}"
+                      method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Titlu *</label>
+                        <input type="text" name="titlu" class="form-control"
+                               th:value="${film.titlu}" required maxlength="200">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descriere</label>
+                        <textarea name="descriere" class="form-control" rows="4"
+                                  th:text="${film.descriere}"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Data lansare</label>
+                            <input type="date" name="dataLansare" class="form-control"
+                                   th:value="${film.dataLansare}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Durata (minute)</label>
+                            <input type="number" name="durata" class="form-control"
+                                   th:value="${film.durata}" min="1" max="999">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Categorie *</label>
+                        <select name="idCategorie" class="form-select" required>
+                            <option value="">-- Selecteaza --</option>
+                            <option th:each="c : ${categorii}"
+                                    th:value="${c.idCategorie}"
+                                    th:text="${c.nume}"
+                                    th:selected="${film.idCategorie == c.idCategorie}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-save"></i>
+                            <span th:text="${modEdit} ? 'Salveaza modificarile' : 'Adauga film'"></span>
+                        </button>
+                        <a href="/filme" class="btn btn-outline-secondary">Anuleaza</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>
