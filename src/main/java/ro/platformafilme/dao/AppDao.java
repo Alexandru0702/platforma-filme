@@ -325,6 +325,73 @@ public class AppDao {
     }
 
     // ================================================================
+    // INTERACTIUNE - VOT, VIZUALIZARE, COMENTARIU
+    // ================================================================
+
+    /**
+     * Adauga un vot pentru un film din partea unui client.
+     * Triggerul trg_update_rating_film recalculeaza automat rating-ul filmului.
+     * Arunca ORA-20040 daca clientul a mai votat deja acest film.
+     */
+    public void addVot(Long idClient, Long idFilm, int nota) {
+        new SimpleJdbcCall(jdbc)
+                .withCatalogName("PKG_INTERACTIUNE").withProcedureName("ADD_VOT")
+                .withoutProcedureColumnMetaDataAccess()
+                .declareParameters(
+                        new SqlParameter("p_id_client", Types.NUMERIC),
+                        new SqlParameter("p_id_film",   Types.NUMERIC),
+                        new SqlParameter("p_nota",      Types.NUMERIC))
+                .execute(new MapSqlParameterSource()
+                        .addValue("p_id_client", idClient)
+                        .addValue("p_id_film",   idFilm)
+                        .addValue("p_nota",      nota));
+    }
+
+    /**
+     * Inregistreaza o vizualizare a unui film de catre un client.
+     * Triggerul trg_prevent_inactive_version arunca ORA-20001 daca versiunea e inactiva.
+     */
+    public Long addVizualizare(Long idClient, Long idVersiune, Integer durata, String stare) {
+        Map<String, Object> out = new SimpleJdbcCall(jdbc)
+                .withCatalogName("PKG_INTERACTIUNE").withProcedureName("ADD_VIZUALIZARE")
+                .withoutProcedureColumnMetaDataAccess()
+                .declareParameters(
+                        new SqlParameter("p_id_client",   Types.NUMERIC),
+                        new SqlParameter("p_id_versiune", Types.NUMERIC),
+                        new SqlParameter("p_durata",      Types.NUMERIC),
+                        new SqlParameter("p_stare",       Types.VARCHAR),
+                        new SqlOutParameter("p_id_viz",   Types.NUMERIC))
+                .execute(new MapSqlParameterSource()
+                        .addValue("p_id_client",   idClient)
+                        .addValue("p_id_versiune", idVersiune)
+                        .addValue("p_durata",      durata)
+                        .addValue("p_stare",       stare));
+        return ((Number) out.get("p_id_viz")).longValue();
+    }
+
+    /**
+     * Adauga un comentariu la un film (id_actor = null).
+     * Triggerul trg_auto_tip_comentariu seteaza automat campul TIP = 'FILM'.
+     */
+    public Long addComentariu(Long idClient, Long idFilm, String continut) {
+        Map<String, Object> out = new SimpleJdbcCall(jdbc)
+                .withCatalogName("PKG_INTERACTIUNE").withProcedureName("ADD_COMENTARIU")
+                .withoutProcedureColumnMetaDataAccess()
+                .declareParameters(
+                        new SqlParameter("p_id_client", Types.NUMERIC),
+                        new SqlParameter("p_id_film",   Types.NUMERIC),
+                        new SqlParameter("p_id_actor",  Types.NUMERIC),
+                        new SqlParameter("p_continut",  Types.VARCHAR),
+                        new SqlOutParameter("p_id_com", Types.NUMERIC))
+                .execute(new MapSqlParameterSource()
+                        .addValue("p_id_client", idClient)
+                        .addValue("p_id_film",   idFilm)
+                        .addValue("p_id_actor",  null)
+                        .addValue("p_continut",  continut));
+        return ((Number) out.get("p_id_com")).longValue();
+    }
+
+    // ================================================================
     // ROW MAPPERS
     // ================================================================
 

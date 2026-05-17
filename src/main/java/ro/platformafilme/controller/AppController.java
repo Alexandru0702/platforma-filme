@@ -40,6 +40,7 @@ public class AppController {
         if (film == null) return "redirect:/filme";
         model.addAttribute("film", film);
         model.addAttribute("versiuni", dao.getVersioniFilm(id));
+        model.addAttribute("clienti", dao.getAllClienti());   // necesar pentru formularele de interactiune
         return "filme/detalii";
     }
 
@@ -99,6 +100,42 @@ public class AppController {
         dao.deleteFilm(id);
         ra.addFlashAttribute("success", "Filmul a fost sters!");
         return "redirect:/filme";
+    }
+
+    // ================================================================
+    // INTERACTIUNE - VOT, VIZUALIZARE, COMENTARIU
+    // ================================================================
+
+    @PostMapping("/filme/{id}/vot")
+    public String adaugaVot(@PathVariable Long id,
+                            @RequestParam Long idClient,
+                            @RequestParam int nota,
+                            RedirectAttributes ra) {
+        dao.addVot(idClient, id, nota);
+        ra.addFlashAttribute("success", "Vot adaugat! Rating-ul filmului a fost actualizat automat.");
+        return "redirect:/filme/" + id;
+    }
+
+    @PostMapping("/filme/{id}/vizualizare")
+    public String adaugaVizualizare(@PathVariable Long id,
+                                    @RequestParam Long idClient,
+                                    @RequestParam Long idVersiune,
+                                    @RequestParam(required = false) Integer durata,
+                                    @RequestParam String stare,
+                                    RedirectAttributes ra) {
+        dao.addVizualizare(idClient, idVersiune, durata, stare);
+        ra.addFlashAttribute("success", "Vizualizare inregistrata cu succes!");
+        return "redirect:/filme/" + id;
+    }
+
+    @PostMapping("/filme/{id}/comentariu")
+    public String adaugaComentariu(@PathVariable Long id,
+                                   @RequestParam Long idClient,
+                                   @RequestParam String continut,
+                                   RedirectAttributes ra) {
+        dao.addComentariu(idClient, id, continut);
+        ra.addFlashAttribute("success", "Comentariu adaugat cu succes!");
+        return "redirect:/filme/" + id;
     }
 
     // ================================================================
